@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Verification - {{ invoice.invoice_number }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    body {
+      background-color: #F8F9FA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .verify-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .verify-header {
+      background-color: #0F172A;
+      color: #FFFFFF;
+      padding: 24px;
+      text-align: center;
+    }
+    .verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: rgba(5, 150, 105, 0.2);
+      border: 1px solid #059669;
+      color: #34D399;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .verify-body {
+      padding: 28px;
+    }
+    .verify-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #F3F4F6;
+      font-size: 13px;
+    }
+    .verify-row:last-child {
+      border-bottom: none;
+    }
+    .verify-label {
+      color: #6B7280;
+      font-weight: 500;
+    }
+    .verify-val {
+      font-weight: 600;
+      color: #111827;
+      text-align: right;
+    }
+    .hash-box {
+      background-color: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #64748B;
+      word-break: break-all;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="verify-card">
+    <div class="verify-header">
+      <div class="verify-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>AUTHENTIC INVOICE RECORD</span>
+      </div>
+      <h1 style="font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.01em;">Invoice Verification</h1>
+      <div style="font-size: 14px; font-family: var(--font-mono); color: #38BDF8; margin-top: 4px;">{{ invoice.invoice_number }}</div>
+    </div>
+
+    <div class="verify-body">
+      <div class="verify-row">
+        <span class="verify-label">Issuing Business</span>
+        <span class="verify-val">{{ invoice.business_name or invoice.issuer_name }}</span>
+      </div>
+
+      <div class="verify-row">
+        <span class="verify-label">Client</span>
+        <span class="verify-val">{{ invoice.client_name }}{% if invoice.client_company %} ({{ invoice.client_company }}){% endif %}</span>
+      </div>
+
+      <div class="verify-row">
+        <span class="verify-label">Total Amount</span>
+        <span class="verify-val" style="font-size: 16px; color: #0F172A;">{{ format_currency(invoice.total, invoice.currency) }}</span>
+      </div>
+
+      <div class="verify-row">
+        <span class="verify-label">Issue Date</span>
+        <span class="verify-val">{{ invoice.invoice_date }}</span>
+      </div>
+
+      <div class="verify-row">
+        <span class="verify-label">Due Date</span>
+        <span class="verify-val">{{ invoice.due_date }}</span>
+      </div>
+
+      <div class="verify-row">
+        <span class="verify-label">Current Payment Status</span>
+        <span class="verify-val">
+          <span class="status-badge {{ invoice.status.lower() }}">{{ invoice.status }}</span>
+        </span>
+      </div>
+
+      {% if invoice.paid_date %}
+        <div class="verify-row">
+          <span class="verify-label">Settlement Date</span>
+          <span class="verify-val" style="color: #047857;">{{ invoice.paid_date }}</span>
+        </div>
+      {% endif %}
+
+      <div class="verify-row">
+        <span class="verify-label">Verification ID</span>
+        <span class="verify-val" style="font-family: var(--font-mono); font-size: 11px;">
+          {{ invoice.invoice_number }}-{{ invoice.verification_token[:6]|upper }}
+        </span>
+      </div>
+
+      <div class="hash-box">
+        <div style="font-weight: 700; color: #334155; margin-bottom: 2px;">
+          {% if is_tamper_free %}
+            <span style="color: #047857;">✓ SHA-256 Integrity Verified</span>
+          {% else %}
+            <span>SHA-256 Checksum</span>
+          {% endif %}
+        </div>
+        <div>{{ invoice.document_hash }}</div>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px; font-size: 11px; color: #9CA3AF;">
+        This public verification page confirms the authenticity and current payment status of this document without exposing confidential financial ledger logs.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
