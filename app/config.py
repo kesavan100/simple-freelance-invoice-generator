@@ -13,7 +13,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "smart_freelance_invoice_secret_key_default")
     
     # SQLite Database Path
-    DATABASE_PATH = BASE_DIR / "instance" / "smart_invoice.db"
+    DATABASE_PATH = os.getenv("DATABASE_PATH", str(BASE_DIR / "instance" / "smart_invoice.db"))
     
     # Uploads directory
     UPLOAD_FOLDER = BASE_DIR / "app" / "static" / "uploads"
