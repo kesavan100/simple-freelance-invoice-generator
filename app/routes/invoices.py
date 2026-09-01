@@ -449,7 +449,7 @@ def send_reminder(invoice_id: int):
             )
             
             # Wrap in basic HTML structure for xhtml2pdf
-            full_html = f\"\"\"
+            full_html = f"""
             <!DOCTYPE html>
             <html>
             <head>
@@ -463,7 +463,7 @@ def send_reminder(invoice_id: int):
                 {html_content}
             </body>
             </html>
-            \"\"\"
+            """
             
             pdf_bytes = BytesIO()
             pisa.CreatePDF(BytesIO(full_html.encode("utf-8")), dest=pdf_bytes)
