@@ -21,11 +21,11 @@
   --text-muted: #6B7280;
   --text-inverse: #FFFFFF;
 
-  /* Primary Brand (Deep Navy / Slate) */
-  --brand-primary: #0F172A;
-  --brand-primary-hover: #1E293B;
-  --brand-accent: #2563EB;
-  --brand-accent-hover: #1D4ED8;
+  /* Primary Brand (Cognizant Blue) */
+  --brand-primary: #000048;
+  --brand-primary-hover: #000030;
+  --brand-accent: #0033A0;
+  --brand-accent-hover: #002277;
 
   /* Semantic Status Colors */
   --status-paid-bg: #ECFDF5;
