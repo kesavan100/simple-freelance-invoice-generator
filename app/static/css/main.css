@@ -21,11 +21,11 @@
   --text-muted: #6B7280;
   --text-inverse: #FFFFFF;
 
-  /* Primary Brand (Cognizant Blue) */
-  --brand-primary: #000048;
-  --brand-primary-hover: #000030;
-  --brand-accent: #0033A0;
-  --brand-accent-hover: #002277;
+  /* Primary Brand (Modern SaaS Blue) */
+  --brand-primary: #1E3A8A;
+  --brand-primary-hover: #1E40AF;
+  --brand-accent: #2563EB;
+  --brand-accent-hover: #1D4ED8;
 
   /* Semantic Status Colors */
   --status-paid-bg: #ECFDF5;
