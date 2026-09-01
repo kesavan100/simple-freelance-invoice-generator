@@ -399,10 +399,13 @@ def send_reminder(invoice_id: int):
     due_date_str = invoice.get("due_date")
     business_name = invoice["profile"].get("business_name") or invoice["profile"].get("full_name") or "Freelance Billing"
 
+    invoice_link = url_for('invoices.view', invoice_id=invoice_id, _external=True)
+    
     email_body = (
         f"Dear {client_name},\n\n"
         f"This is a friendly reminder that invoice {invoice_number} for {amount} "
         f"was due on {due_date_str} and is currently marked as {invoice['status']}.\n\n"
+        f"You can view, print, and download your invoice PDF securely using this link:\n{invoice_link}\n\n"
         f"Please verify and complete payment at your earliest convenience.\n\n"
         f"Thank you,\n{business_name}"
     )
