@@ -15,7 +15,9 @@ from app.services.invoice_service import (
     export_invoices_to_csv
 )
 from app.services.qr_service import generate_verification_token, generate_invoice_qr_code, generate_payment_qr_code
-
+from xhtml2pdf import pisa
+from io import BytesIO
+from email.mime.application import MIMEApplication
 invoices_bp = Blueprint("invoices", __name__, url_prefix="/invoices")
 
 
@@ -414,6 +416,50 @@ def send_reminder(invoice_id: int):
             msg["To"] = client_email
             msg["Subject"] = f"Payment Reminder: Invoice {invoice_number} - {business_name}"
             msg.attach(MIMEText(email_body, "plain"))
+
+            # --- Generate PDF Attachment ---
+            qr_code_data = generate_payment_qr_code(
+                upi_id=invoice["profile"].get("upi_id") or "alexmorgan@okhdfcbank",
+                payee_name=business_name,
+                amount=invoice["total"],
+                currency=invoice["currency"],
+                invoice_number=invoice["invoice_number"]
+            )
+            
+            # Render the HTML for the invoice
+            html_content = render_template(
+                f"invoices/templates/{invoice['template']}.html",
+                invoice=invoice,
+                payment_qr_data=qr_code_data,
+                qr_code_data=qr_code_data,
+                format_currency=format_currency
+            )
+            
+            # Wrap in basic HTML structure for xhtml2pdf
+            full_html = f\"\"\"
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <style>
+                    @page {{ size: a4 portrait; margin: 1cm; }}
+                    body {{ font-family: Helvetica, sans-serif; font-size: 12px; }}
+                </style>
+            </head>
+            <body>
+                {html_content}
+            </body>
+            </html>
+            \"\"\"
+            
+            pdf_bytes = BytesIO()
+            pisa.CreatePDF(BytesIO(full_html.encode("utf-8")), dest=pdf_bytes)
+            
+            # Attach PDF
+            pdf_attachment = MIMEApplication(pdf_bytes.getvalue(), _subtype="pdf")
+            pdf_attachment.add_header('Content-Disposition', 'attachment', filename=f"{invoice_number}.pdf")
+            msg.attach(pdf_attachment)
+            # -------------------------------
 
             with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
                 if smtp_tls:
