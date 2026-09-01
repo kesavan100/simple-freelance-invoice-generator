@@ -98,6 +98,19 @@ def home():
         LIMIT 3
     """).fetchall()
 
+    from datetime import datetime
+    today = date.today()
+    processed_payments = []
+    for pay in upcoming_payments:
+        pay_dict = dict(pay)
+        try:
+            due_date_obj = datetime.strptime(pay_dict["due_date"], "%Y-%m-%d").date()
+            delta = (due_date_obj - today).days
+            pay_dict["is_nearby"] = (0 <= delta <= 3)
+        except (ValueError, TypeError):
+            pay_dict["is_nearby"] = False
+        processed_payments.append(pay_dict)
+
     # 6. Smart Business Insights
     insights = generate_business_insights()
 
@@ -117,7 +130,7 @@ def home():
         metrics=metrics,
         chart_payload=json.dumps(chart_payload),
         recent_invoices=recent_invoices,
-        upcoming_payments=upcoming_payments,
+        upcoming_payments=processed_payments,
         insights=insights[:3], # Top 3 concise insights for zero-scroll fit
         categories=Config.EXPENSE_CATEGORIES,
         format_currency=format_currency

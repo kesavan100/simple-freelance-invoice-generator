@@ -50,6 +50,19 @@ def index():
     query += " ORDER BY i.invoice_date DESC, i.id DESC"
     invoices = db.execute(query, params).fetchall()
     
+    from datetime import datetime, date
+    today = date.today()
+    processed_invoices = []
+    for inv in invoices:
+        inv_dict = dict(inv)
+        try:
+            due_date_obj = datetime.strptime(inv_dict["due_date"], "%Y-%m-%d").date()
+            delta = (due_date_obj - today).days
+            inv_dict["is_nearby"] = (0 <= delta <= 3) and inv_dict["status"] not in ("Paid", "Cancelled")
+        except (ValueError, TypeError):
+            inv_dict["is_nearby"] = False
+        processed_invoices.append(inv_dict)
+    
     # Counts for status filter tabs
     counts = {
         "all": db.execute("SELECT COUNT(*) as c FROM invoices").fetchone()["c"],
@@ -62,7 +75,7 @@ def index():
     
     return render_template(
         "invoices/index.html",
-        invoices=invoices,
+        invoices=processed_invoices,
         search=search,
         status_filter=status_filter,
         counts=counts,

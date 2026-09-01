@@ -87,9 +87,12 @@
                 {{ inv.invoice_date }}
               </td>
               <td style="font-size: 12px;">
-                <span {% if inv.status == 'Overdue' %}style="color: #DC2626; font-weight: 600;"{% endif %}>
+                <span {% if inv.status == 'Overdue' or inv.is_nearby %}style="color: #DC2626; font-weight: 600;"{% endif %}>
                   {{ inv.due_date }}
                 </span>
+                {% if inv.is_nearby and inv.status != 'Overdue' %}
+                  <span class="status-badge pending" style="font-size: 8px; margin-left: 4px; border-color: #DC2626; color: #DC2626; background-color: #FEF2F2; padding: 1px 4px;">DUE SOON</span>
+                {% endif %}
               </td>
               <td class="numeric-cell" style="font-weight: 600; font-size: 14px;">
                 {{ format_currency(inv.total, inv.currency) }}

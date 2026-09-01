@@ -188,11 +188,13 @@
                   {{ format_currency(pay.total, pay.currency) }}
                 </td>
                 <td style="padding: 8px 12px;">
-                  <span style="font-size: 11px; {% if pay.status == 'Overdue' %}color: #DC2626; font-weight: 700;{% endif %}">
+                  <span style="font-size: 11px; {% if pay.status == 'Overdue' or pay.is_nearby %}color: #DC2626; font-weight: 700;{% endif %}">
                     {{ pay.due_date }}
                   </span>
                   {% if pay.status == 'Overdue' %}
                     <span class="status-badge overdue" style="font-size: 8px; margin-left: 2px;">LATE</span>
+                  {% elif pay.is_nearby %}
+                    <span class="status-badge pending" style="font-size: 8px; margin-left: 2px; border-color: #DC2626; color: #DC2626; background-color: #FEF2F2;">DUE SOON</span>
                   {% endif %}
                 </td>
               </tr>
