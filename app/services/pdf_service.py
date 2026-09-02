@@ -58,7 +58,7 @@ def generate_invoice_pdf(invoice, format_currency):
     pdf.set_font("Helvetica", "B", 10)
     pdf.set_fill_color(241, 245, 249) # Light gray
     pdf.cell(15, 8, "#", border=1, fill=True)
-    pdf.cell(95, 8, "Description", border=1, fill=True)
+    pdf.cell(85, 8, "Description", border=1, fill=True)
     pdf.cell(20, 8, "Hrs", border=1, fill=True, align="R")
     pdf.cell(30, 8, "Rate", border=1, fill=True, align="R")
     pdf.cell(30, 8, "Amount", border=1, fill=True, align="R", new_x="LMARGIN", new_y="NEXT")
@@ -67,11 +67,11 @@ def generate_invoice_pdf(invoice, format_currency):
     pdf.set_font("Helvetica", "", 10)
     for i, item in enumerate(invoice["line_items"], 1):
         desc = item["description"]
-        if len(desc) > 50:
-            desc = desc[:47] + "..."
+        if len(desc) > 42:
+            desc = desc[:39] + "..."
             
         pdf.cell(15, 8, str(i), border=1)
-        pdf.cell(95, 8, desc, border=1)
+        pdf.cell(85, 8, desc, border=1)
         pdf.cell(20, 8, str(item["hours"]), border=1, align="R")
         pdf.cell(30, 8, format_currency(item["hourly_rate"], invoice["currency"]).replace("₹", "INR "), border=1, align="R")
         pdf.cell(30, 8, format_currency(item["amount"], invoice["currency"]).replace("₹", "INR "), border=1, align="R", new_x="LMARGIN", new_y="NEXT")
@@ -80,24 +80,24 @@ def generate_invoice_pdf(invoice, format_currency):
     
     # Totals
     pdf.set_font("Helvetica", "", 10)
-    pdf.cell(130, 6, "")
+    pdf.cell(120, 6, "")
     pdf.cell(30, 6, "Subtotal:", align="R")
     pdf.cell(30, 6, format_currency(invoice["subtotal"], invoice["currency"]).replace("₹", "INR "), align="R", new_x="LMARGIN", new_y="NEXT")
     
     if float(invoice.get("discount_amount", 0)) > 0:
-        pdf.cell(130, 6, "")
+        pdf.cell(120, 6, "")
         pdf.set_text_color(4, 120, 87)
         pdf.cell(30, 6, f"Discount ({invoice['discount_percent']}%):", align="R")
         pdf.cell(30, 6, f"-{format_currency(invoice['discount_amount'], invoice['currency']).replace('₹', 'INR ')}", align="R", new_x="LMARGIN", new_y="NEXT")
         pdf.set_text_color(30, 41, 59)
         
     if float(invoice.get("tax_amount", 0)) > 0:
-        pdf.cell(130, 6, "")
+        pdf.cell(120, 6, "")
         pdf.cell(30, 6, f"Tax ({invoice['tax_percent']}%):", align="R")
         pdf.cell(30, 6, f"+{format_currency(invoice['tax_amount'], invoice['currency']).replace('₹', 'INR ')}", align="R", new_x="LMARGIN", new_y="NEXT")
         
     pdf.set_font("Helvetica", "B", 12)
-    pdf.cell(130, 8, "")
+    pdf.cell(120, 8, "")
     pdf.cell(30, 8, "Total Due:", align="R")
     pdf.cell(30, 8, format_currency(invoice["total"], invoice["currency"]).replace("₹", "INR "), align="R", new_x="LMARGIN", new_y="NEXT")
     
