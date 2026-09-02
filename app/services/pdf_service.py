@@ -40,7 +40,7 @@ def generate_invoice_pdf(invoice, format_currency):
     pdf.set_font("Helvetica", "B", 10)
     pdf.cell(40, 6, "Date:")
     pdf.set_font("Helvetica", "", 10)
-    pdf.cell(40, 6, invoice["invoice_date"], new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(40, 6, str(invoice.get("invoice_date", "")), new_x="LMARGIN", new_y="NEXT")
     
     pdf.cell(110, 6, invoice.get("client_company", ""))
     
@@ -49,7 +49,7 @@ def generate_invoice_pdf(invoice, format_currency):
     pdf.set_font("Helvetica", "B", 10)
     if invoice["status"] == "Overdue":
         pdf.set_text_color(220, 38, 38)
-    pdf.cell(40, 6, invoice["due_date"], new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(40, 6, str(invoice.get("due_date", "")), new_x="LMARGIN", new_y="NEXT")
     pdf.set_text_color(30, 41, 59)
     
     pdf.set_y(80)
