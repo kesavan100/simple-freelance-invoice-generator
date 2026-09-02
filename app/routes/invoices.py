@@ -197,7 +197,8 @@ def create():
         profile=profile,
         today=date.today().isoformat(),
         currencies=Config.SUPPORTED_CURRENCIES,
-        templates=Config.AVAILABLE_TEMPLATES
+        templates=Config.AVAILABLE_TEMPLATES,
+        format_currency=format_currency
     )
 
 
@@ -334,7 +335,8 @@ def edit(invoice_id: int):
         clients=clients,
         profile=profile,
         currencies=Config.SUPPORTED_CURRENCIES,
-        templates=Config.AVAILABLE_TEMPLATES
+        templates=Config.AVAILABLE_TEMPLATES,
+        format_currency=format_currency
     )
 
 
