@@ -105,8 +105,8 @@ def generate_invoice_pdf(invoice, format_currency):
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(100, 116, 139)
     if invoice.get("payment_terms"):
-        pdf.multi_cell(0, 5, f"Terms: {invoice['payment_terms']}")
+        pdf.multi_cell(0, 5, f"Terms: {invoice['payment_terms']}", new_x="LMARGIN", new_y="NEXT")
     if invoice.get("notes"):
-        pdf.multi_cell(0, 5, f"Notes: {invoice['notes']}")
+        pdf.multi_cell(0, 5, f"Notes: {invoice['notes']}", new_x="LMARGIN", new_y="NEXT")
         
     return bytes(pdf.output())
