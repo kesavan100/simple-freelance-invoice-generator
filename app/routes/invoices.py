@@ -424,11 +424,21 @@ def send_reminder(invoice_id: int):
     # If SMTP is configured, attempt sending
     if smtp_host and smtp_user and smtp_pass:
         try:
+            from email.mime.application import MIMEApplication
+            from app.services.pdf_service import generate_invoice_pdf
+            
             msg = MIMEMultipart()
             msg["From"] = smtp_from
             msg["To"] = client_email
             msg["Subject"] = f"Payment Reminder: Invoice {invoice_number} - {business_name}"
             msg.attach(MIMEText(email_body, "plain"))
+
+            # --- Generate PDF Attachment ---
+            pdf_bytes = generate_invoice_pdf(invoice, format_currency)
+            pdf_attachment = MIMEApplication(pdf_bytes, _subtype="pdf")
+            pdf_attachment.add_header('Content-Disposition', 'attachment', filename=f"{invoice_number}.pdf")
+            msg.attach(pdf_attachment)
+            # -------------------------------
 
             with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
                 if smtp_tls:
